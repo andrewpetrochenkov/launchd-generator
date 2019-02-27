@@ -1,0 +1,124 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+# script.ext -> script.ext.plist
+
+usage() {
+    cat <<EOF 1>&2
+usage: $(basename $0) script ...
+EOF
+    [[ $1 == "-h" ]] || [[ $1 == "--help" ]]; exit
+}
+
+[[ $1 == "-h" ]] || [[ $1 == "--help" ]] && usage "$@"
+
+[[ $# == 0 ]] && usage
+
+PlistBuddy() { /usr/libexec/PlistBuddy "$@"; }
+
+while [[ $# != 0 ]]; do
+    ! [ -e "$1" ] && echo "ERROR ($1): NOT EXISTS" && exit 1
+    ! [ -f "$1" ] && echo "ERROR ($1): NOT A FILE" && exit 1
+    cat "$1" | head -1 | grep -q ^#! || { echo "ERROR ($1): SHEBANG #! REQUIRED" && exit 1; }
+    Program="$(cd "${1%/*}"; pwd -P)/${1##*/}"
+    ! [ -x "$Program" ] && { chmod +x "$Program" || exit; }
+    PLIST="$Program".plist
+
+    # Label
+    Label="$(grep -i "Label: " "$1" | head -1 | awk -F ':' '{print $2}' | awk '{print $1}' | tr -d ' ')"
+    [[ -z "$Label" ]] && { relpath="${1/$PWD\//}"; Label="${relpath//\//_}"; }
+    Label="$(echo "$Label" | sed 's/^.//' | sed 's/^_//')"
+
+    # StartInterval (int)
+    StartInterval="$(grep -i "StartInterval: " "$1" | head -1 | awk -F ':' '{print $2}' | awk '{print $1}' | tr -d ' ')"
+
+    # KeepAlive (boolean, true/false)
+    KeepAlive="$(grep -i "KeepAlive: " "$1" | head -1 | awk -F ':' '{print $2}' | awk '{print $1}' | tr -d ' ' | tr '[A-Z]' '[a-z]')"
+
+    # RunAtLoad (boolean, true/false)
+    RunAtLoad="$(grep -i "RunAtLoad: " "$1" | head -1 | awk -F ':' '{print $2}' | awk '{print $1}' | tr -d ' ' | tr '[A-Z]' '[a-z]')"
+
+    # StandardErrorPath (string)
+    StandardErrorPath="$(grep -i "StandardErrorPath: " "$1" | head -1 | awk -F ':' '{print $2}' | awk '{print $1}' | tr -d ' ')"
+    StandardErrorPath="${StandardErrorPath//\~/$HOME}"
+
+    # StandardOutPath (string)
+    StandardOutPath="$(grep -i "StandardOutPath: " "$1" | head -1 | awk -F ':' '{print $2}' | awk '{print $1}' | tr -d ' ')"
+    StandardOutPath="${StandardOutPath//\~/$HOME}"
+
+    WatchPaths="$(grep -i "WatchPaths: " "$1" | awk -F ':' '{print $2}' | awk '{print $1}' | sed "s/^[ \t]*//")"
+    WatchPaths="${WatchPaths//\~/$HOME}"
+
+    # WorkingDirectory (string)
+    WorkingDirectory="$(grep -i "WorkingDirectory: " "$1" | head -1 | awk -F ':' '{print $2}' | awk '{print $1}' | tr -d ' ')"
+    WorkingDirectory="${WorkingDirectory//\~/$HOME}"
+    [[ -z "$WorkingDirectory" ]] && WorkingDirectory="${Program%/*}"
+
+    [[ -z "$KeepAlive" ]] && [[ -z "$RunAtLoad" ]] && [[ -z "$StartInterval" ]] && [[ -z "$WatchPaths" ]] && echo "SKIP ($1): KeepAlive/RunAtLoad/StartInterval/WatchPaths NOT FOUND" && shift && continue
+
+    (
+        set -- /usr/libexec/PlistBuddy
+        # Label
+        old="$(PlistBuddy -c "Print Label" "$PLIST" 2> /dev/null)" || old=
+        [[ -z "$old" ]] && set "$@" -c "Add Label string '$Label'"
+        [[ -n "$old" ]] && set "$@" -c "Set Label '$Label'"
+
+        # ProgramArguments
+        old="$(PlistBuddy -c "Print ProgramArguments" "$PLIST" 2> /dev/null)" || old=
+        [[ -n "$old" ]] && set "$@" -c "Delete :ProgramArguments"
+        set "$@" -c "Add :ProgramArguments array" \
+             -c "Add :ProgramArguments:0 string $Program"  \
+             -c "Add :ProgramArguments:1 string '$PLIST'"
+
+        # KeepAlive
+        old="$(PlistBuddy -c "Print KeepAlive" "$PLIST" 2> /dev/null)" || old=
+        [[ -z "$old" ]] && [[ "$KeepAlive" == "true" ]] && set "$@" -c "Add KeepAlive bool true"
+        [[ -n "$old" ]] && [[ "$KeepAlive" == "true" ]] && set "$@" -c "Set KeepAlive true"
+        [[ -n "$old" ]] && [[ "$KeepAlive" != "true" ]] && set "$@" -c "Delete KeepAlive"
+
+        # RunAtLoad
+        old="$(PlistBuddy -c "Print RunAtLoad" "$PLIST" 2> /dev/null)" || old=
+        [[ -z "$old" ]] && [[ "$RunAtLoad" == "true" ]] && set "$@" -c "Add RunAtLoad bool true"
+        [[ -n "$old" ]] && [[ "$RunAtLoad" == "true" ]] && set "$@" -c "Set RunAtLoad true"
+        [[ -n "$old" ]] && [[ "$RunAtLoad" != "true" ]] && set "$@" -c "Delete RunAtLoad"
+
+        # StartInterval
+        old="$(/usr/libexec/PlistBuddy -c "Print StartInterval" "$PLIST" 2> /dev/null)" || old=
+        [[ -z "$old" ]] && [[ -n "$StartInterval" ]] && set "$@" -c "Add StartInterval integer $StartInterval"
+        [[ -n "$old" ]] && [[ -n "$StartInterval" ]] && set "$@" -c "Set StartInterval $StartInterval"
+        [[ -n "$old" ]] && [[ -z "$StartInterval" ]] && set "$@" -c "Delete StartInterval"
+
+        # StandardErrorPath
+        old="$(PlistBuddy -c "Print StandardErrorPath" "$PLIST" 2> /dev/null)" || old=
+        [[ -z "$old" ]] && [[ -n "$StandardErrorPath" ]] && set "$@" -c "Add StandardErrorPath string '$StandardErrorPath'"
+        [[ -n "$old" ]] && [[ -n "$StandardErrorPath" ]] && set "$@" -c "Set StandardErrorPath '$StandardErrorPath'"
+        [[ -n "$old" ]] && [[ -z "$StandardErrorPath" ]] && set "$@" -c "Delete StandardErrorPath"
+
+        # StandardOutPath
+        old="$(PlistBuddy -c "Print StandardOutPath" "$PLIST" 2> /dev/null)" || old=
+        [[ -z "$old" ]] && [[ -n "$StandardOutPath" ]] && set "$@" -c "Add StandardOutPath string '$StandardOutPath'"
+        [[ -n "$old" ]] && [[ -n "$StandardOutPath" ]] && set "$@" -c "Set StandardOutPath '$StandardOutPath'"
+        [[ -n "$old" ]] && [[ -z "$StandardOutPath" ]] && set "$@" -c "Delete StandardOutPath"
+
+        # WorkingDirectory
+        old="$(PlistBuddy -c "Print WorkingDirectory" "$PLIST" 2> /dev/null)" || old=
+        [[ -z "$old" ]] && [[ -n "$WorkingDirectory" ]] && set "$@" -c "Add WorkingDirectory string '$WorkingDirectory'"
+        [[ -n "$old" ]] && [[ -n "$WorkingDirectory" ]] && set "$@" -c "Set WorkingDirectory '$WorkingDirectory'"
+        [[ -n "$old" ]] && [[ -z "$WorkingDirectory" ]] && set "$@" -c "Delete WorkingDirectory"
+
+        # WatchPaths
+        old="$(PlistBuddy -c "Print WatchPaths" "$PLIST" 2> /dev/null)" || old=
+        [[ -n "$old" ]] && set "$@" -c "Delete :WatchPaths"
+        [[ -n "$WatchPaths" ]] && {
+            set -- "$@" -c "Add :WatchPaths array"
+            i=0
+            while IFS= read path; do
+                set -- "$@" -c "Add :WatchPaths:$i string '$path'"
+                ((i++))
+            done <<< "$WatchPaths"
+        }
+        set -- "$@" "$PLIST"
+        "$@" 1> /dev/null
+    ) || exit
+    shift
+done;:

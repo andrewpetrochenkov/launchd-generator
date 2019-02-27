@@ -1,0 +1,14 @@
+{
+  "name": "launchd-generator",
+  "version": "2019.02.27",
+  "description": "launchd.plist generator",
+  "keywords": [
+    "launchd",
+    "generator"
+  ],
+  "homepage": "https://github.com/looking-for-a-job/launchd-generator",
+  "license": "Unlicense",
+  "bin": {
+    "launchd-generator": "./scripts/launchd-generator"
+  }
+}
