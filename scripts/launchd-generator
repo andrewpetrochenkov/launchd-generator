@@ -26,7 +26,7 @@ get_value() {
     path="$3"
     value="$(grep -i "$key: " "$path")"
     [[ -z "$value" ]] && value="$(grep -i "$key@$type: " "$path")"
-    value="$(echo "$value" | awk -F ':' '{print $2}' | sed "s/^[ \t]*//")"
+    value="$(echo "$value" | awk -F ':' '{print $2}' | sed -e 's/^[[:space:]]*//')"
     [[ "$value" == "Array {"* ]] && old="$(echo $value | tail -n +2 | sed '$d' |sed "s/^[ \t]*//")"
     echo "${value//\~/$HOME}"
 }
