@@ -1,6 +1,6 @@
 {
   "name": "launchd-generator",
-  "version": "2019.02.27",
+  "version": "2019.02.28",
   "description": "launchd.plist generator",
   "keywords": [
     "launchd",

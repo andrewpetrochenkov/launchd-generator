@@ -12,7 +12,7 @@ $ [sudo] pip install launchd-generator
 ```
 
 #### Features
-+   generate launchd.plist from ANY script
++   generate launchd.plist from any script
 +   define [launchd.plist keys](http://www.manpagez.com/man/5/launchd.plist/) in script comments
 
 #### How it works
@@ -22,6 +22,7 @@ $ [sudo] pip install launchd-generator
 #!/usr/bin/env <interpreter>
 
 KEY: VALUE
+CUSTOM_KEY@type: VALUE # custom key. @type required - array/bool/integer/string
 ```
 
 #### CLI
