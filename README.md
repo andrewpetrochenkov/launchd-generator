@@ -1,9 +1,13 @@
-[![](https://img.shields.io/badge/OS-Unix-blue.svg?longCache=True)]()
+<!--
+https://pypi.org/project/readme-generator/
+-->
+
+[![](https://img.shields.io/badge/OS-MacOS-blue.svg?longCache=True)]()
 [![](https://img.shields.io/pypi/v/launchd-generator.svg?maxAge=3600)](https://pypi.org/project/launchd-generator/)
 [![](https://img.shields.io/npm/v/launchd-generator.svg?maxAge=3600)](https://www.npmjs.com/package/launchd-generator)
 [![Travis](https://api.travis-ci.org/looking-for-a-job/launchd-generator.svg?branch=master)](https://travis-ci.org/looking-for-a-job/launchd-generator/)
 
-#### Install
+#### Installation
 ```bash
 $ [sudo] npm i -g launchd-generator
 ```
@@ -75,7 +79,17 @@ WatchPaths: ~/Downloads
 $ cd ~/Library/LaunchAgents && find . \( -name "*.sh" -o -name "*.py" \) | xargs launchd-generator
 ```
 
+#### Related projects
++   [`classifiers-generator` - python classifiers generator](https://pypi.org/project/classifiers-generator/)
++   [`commands-generator` - shell commands generator](https://pypi.org/project/commands-generator/)
++   [`launchd-generator` - launchd.plist generator](https://pypi.org/project/launchd-generator/)
++   [`readme-generator` - `README.md` generator](https://pypi.org/project/readme-generator/)
++   [`setupcfg-generator` - `setup.cfg` generator](https://pypi.org/project/setupcfg-generator/)
++   [`travis-generator` - `.travis.yml` generator](https://pypi.org/project/travis-generator/)
+
 #### Links
 +   [launchd.plist(5)](http://www.manpagez.com/man/5/launchd.plist/)
 
-<p align="center"><a href="https://pypi.org/project/readme-md/">readme-md</a> - README.md generator</p>
+<p align="center">
+    <a href="https://pypi.org/project/readme-generator/">readme-generator</a>
+</p>
