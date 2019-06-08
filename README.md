@@ -1,5 +1,6 @@
 <!--
 https://pypi.org/project/readme-generator/
+https://pypi.org/project/python-readme-generator/
 -->
 
 [![](https://img.shields.io/badge/OS-MacOS-blue.svg?longCache=True)]()
@@ -29,7 +30,7 @@ KEY: VALUE
 CUSTOM_KEY@type: VALUE # custom key. @type required - array/bool/integer/string
 ```
 
-#### CLI
+#### Scripts usage
 ```bash
 usage: launchd-generator script ...
 ```
@@ -91,5 +92,5 @@ $ cd ~/Library/LaunchAgents && find . \( -name "*.sh" -o -name "*.py" \) | xargs
 +   [launchd.plist(5)](http://www.manpagez.com/man/5/launchd.plist/)
 
 <p align="center">
-    <a href="https://pypi.org/project/readme-generator/">readme-generator</a>
+    <a href="https://pypi.org/project/python-readme-generator/">python-readme-generator</a>
 </p>

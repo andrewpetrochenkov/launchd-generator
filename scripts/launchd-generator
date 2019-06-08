@@ -64,7 +64,7 @@ while [[ $# != 0 ]]; do
     PLIST="$Program".plist
 
     [[ -z "$Label" ]] && { relpath="${1/$PWD\//}"; Label="${relpath//\//_}"; }
-    Label="$(echo "$Label" | sed 's/^.//' | sed 's/^_//')"
+    Label="$(echo "$Label" | sed 's/^.//' | sed 's/^_//' | sed "s/ /_/g")"
 
     ProgramArguments="$Program
 $PLIST"
