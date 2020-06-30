@@ -1,24 +1,22 @@
 <!--
-https://pypi.org/project/readme-generator/
-https://pypi.org/project/python-readme-generator/
+https://readme42.com
 -->
 
-[![](https://img.shields.io/badge/OS-MacOS-blue.svg?longCache=True)]()
-[![](https://img.shields.io/pypi/v/launchd-generator.svg?maxAge=3600)](https://pypi.org/project/launchd-generator/)
-[![](https://img.shields.io/npm/v/launchd-generator.svg?maxAge=3600)](https://www.npmjs.com/package/launchd-generator)
-[![Travis](https://api.travis-ci.org/looking-for-a-job/launchd-generator.svg?branch=master)](https://travis-ci.org/looking-for-a-job/launchd-generator/)
 
-#### Installation
-```bash
-$ [sudo] npm i -g launchd-generator
-```
+
+[![](https://img.shields.io/badge/OS-Unix-blue.svg?longCache=True)]()
+[![](https://img.shields.io/pypi/v/launchd-generator.svg?maxAge=3600)](https://pypi.org/project/launchd-generator/)
+[![](https://img.shields.io/npm/v/launchd-generator.svg?maxAge=3600)](https://www.npmjs.com/package/launchd-generator)[![](https://img.shields.io/badge/License-Unlicense-blue.svg?longCache=True)](https://unlicense.org/)
+[![](https://github.com/andrewp-as-is/launchd-generator/workflows/tests42/badge.svg)](https://github.com/andrewp-as-is/launchd-generator/actions)
+
+### Installation
 ```bash
 $ [sudo] pip install launchd-generator
 ```
 
-#### Features
-+   generate launchd.plist from any script
-+   define [launchd.plist keys](http://www.manpagez.com/man/5/launchd.plist/) in script comments
+```bash
+$ [sudo] npm i -g launchd-generator
+```
 
 #### How it works
 `script.py` -> `script.py.plist`, `script.sh` -> `script.sh.plist`
@@ -30,10 +28,9 @@ KEY: VALUE
 CUSTOM_KEY@type: VALUE # custom key. @type required - array/bool/integer/string
 ```
 
-#### Scripts usage
-```bash
-usage: launchd-generator script ...
-```
+#### Features
++   generate launchd.plist from any script
++   define [launchd.plist keys](http://www.manpagez.com/man/5/launchd.plist/) in script comments
 
 #### Examples
 `agent.sh`
@@ -80,7 +77,7 @@ WatchPaths: ~/Downloads
 $ cd ~/Library/LaunchAgents && find . \( -name "*.sh" -o -name "*.py" \) | xargs launchd-generator
 ```
 
-#### Related projects
+#### Related
 +   [`classifiers-generator` - python classifiers generator](https://pypi.org/project/classifiers-generator/)
 +   [`commands-generator` - shell commands generator](https://pypi.org/project/commands-generator/)
 +   [`launchd-generator` - launchd.plist generator](https://pypi.org/project/launchd-generator/)
@@ -92,5 +89,5 @@ $ cd ~/Library/LaunchAgents && find . \( -name "*.sh" -o -name "*.py" \) | xargs
 +   [launchd.plist(5)](http://www.manpagez.com/man/5/launchd.plist/)
 
 <p align="center">
-    <a href="https://pypi.org/project/python-readme-generator/">python-readme-generator</a>
+    <a href="https://readme42.com/">readme42.com</a>
 </p>

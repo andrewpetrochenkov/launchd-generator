@@ -1,5 +1,8 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-from setuptools import setup
+import setuptools
 
-setup()
+setuptools.setup(
+    name='launchd-generator',
+    install_requires=open('requirements.txt').read().splitlines(),
+    packages=setuptools.find_packages(),
+    scripts=['scripts/launchd-generator']
+)
